@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'date'
 
 describe AmplitudeAPI::Event do
   user = Struct.new(:id)
@@ -42,7 +43,7 @@ describe AmplitudeAPI::Event do
   describe 'init' do
     context 'attributes' do
       it 'accepts string attributes' do
-        time = Time.parse('2016-01-01 00:00:00 -0000')
+        time = DateTime.parse('2016-01-01 00:00:00 -0000').to_time
         event = described_class.new(
           'user_id' => 123,
           'device_id' => 'abcd',
@@ -65,7 +66,7 @@ describe AmplitudeAPI::Event do
       end
 
       it 'accepts symbol attributes' do
-        time = Time.parse('2016-01-01 00:00:00 -0000')
+        time = DateTime.parse('2016-01-01 00:00:00 -0000').to_time
         event = described_class.new(
           user_id: 123,
           device_id: 'abcd',
@@ -131,7 +132,7 @@ describe AmplitudeAPI::Event do
 
     describe 'time' do
       it 'includes a time for the event' do
-        time = Time.parse('2016-01-01 00:00:00 -0000')
+        time = DateTime.parse('2016-01-01 00:00:00 -0000').to_time
         event = described_class.new(
           user_id: 123,
           event_type: 'clicked on home',
