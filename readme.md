@@ -15,8 +15,7 @@ The following code snippet will immediately track an event to the Amplitude API.
 
 ```ruby
 # Configure your Amplitude API key
-AmplitudeAPI.api_key = "abcdef123456"
-
+amplitude = AmplitudeAPI.new("abcdef123456")
 event = AmplitudeAPI::Event.new({
   user_id: "123",
   event_type: "clicked on home",
@@ -27,7 +26,7 @@ event = AmplitudeAPI::Event.new({
     arbitrary: "properties"
   }
 })
-AmplitudeAPI.track(event)
+amplitude.track(event)
 ```
 
 Currently, we are using this in Rails and using ActiveJob to dispatch events asynchronously. I plan on moving background/asynchronous support into this gem.

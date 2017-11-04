@@ -4,6 +4,10 @@ describe AmplitudeAPI do
   let(:user) { Struct.new(:id).new(123) }
   let(:device_id) { 'abcdef' }
 
+  before do
+    @described_class_instance = described_class.new('stub api key')
+  end
+
   describe '.track' do
     context 'with a single event' do
       context 'with only user_id' do
@@ -13,13 +17,13 @@ describe AmplitudeAPI do
             event_type: 'clicked on sign up'
           )
           body = {
-            api_key: described_class.api_key,
+            api_key: @described_class_instance.api_key,
             event: JSON.generate([event.to_hash])
           }
 
           expect(Typhoeus).to receive(:post).with(AmplitudeAPI::TRACK_URI_STRING, body: body)
 
-          described_class.track(event)
+          @described_class_instance.track(event)
         end
       end
       context 'with only device_id' do
@@ -29,13 +33,13 @@ describe AmplitudeAPI do
             event_type: 'clicked on sign up'
           )
           body = {
-            api_key: described_class.api_key,
+            api_key: @described_class_instance.api_key,
             event: JSON.generate([event.to_hash])
           }
 
           expect(Typhoeus).to receive(:post).with(AmplitudeAPI::TRACK_URI_STRING, body: body)
 
-          described_class.track(event)
+          @described_class_instance.track(event)
         end
       end
       context 'with both user_id and device_id' do
@@ -46,13 +50,13 @@ describe AmplitudeAPI do
             event_type: 'clicked on sign up'
           )
           body = {
-            api_key: described_class.api_key,
+            api_key: @described_class_instance.api_key,
             event: JSON.generate([event.to_hash])
           }
 
           expect(Typhoeus).to receive(:post).with(AmplitudeAPI::TRACK_URI_STRING, body: body)
 
-          described_class.track(event)
+          @described_class_instance.track(event)
         end
       end
     end
@@ -68,13 +72,13 @@ describe AmplitudeAPI do
           event_type: 'liked a widget'
         )
         body = {
-          api_key: described_class.api_key,
+          api_key: @described_class_instance.api_key,
           event: JSON.generate([event.to_hash, event2.to_hash])
         }
 
         expect(Typhoeus).to receive(:post).with(AmplitudeAPI::TRACK_URI_STRING, body: body)
 
-        described_class.track([event, event2])
+        @described_class_instance.track([event, event2])
       end
     end
   end
@@ -91,13 +95,13 @@ describe AmplitudeAPI do
             }
           )
           body = {
-            api_key: described_class.api_key,
+            api_key: @described_class_instance.api_key,
             identification: JSON.generate([identification.to_hash])
           }
 
           expect(Typhoeus).to receive(:post).with(AmplitudeAPI::IDENTIFY_URI_STRING, body: body)
 
-          described_class.identify(identification)
+          @described_class_instance.identify(identification)
         end
       end
       context 'with only device_id' do
@@ -110,13 +114,13 @@ describe AmplitudeAPI do
             }
           )
           body = {
-            api_key: described_class.api_key,
+            api_key: @described_class_instance.api_key,
             identification: JSON.generate([identification.to_hash])
           }
 
           expect(Typhoeus).to receive(:post).with(AmplitudeAPI::IDENTIFY_URI_STRING, body: body)
 
-          described_class.identify(identification)
+          @described_class_instance.identify(identification)
         end
       end
       context 'with both user_id and device_id' do
@@ -130,13 +134,13 @@ describe AmplitudeAPI do
             }
           )
           body = {
-            api_key: described_class.api_key,
+            api_key: @described_class_instance.api_key,
             identification: JSON.generate([identification.to_hash])
           }
 
           expect(Typhoeus).to receive(:post).with(AmplitudeAPI::IDENTIFY_URI_STRING, body: body)
 
-          described_class.identify(identification)
+          @described_class_instance.identify(identification)
         end
       end
     end
@@ -158,13 +162,13 @@ describe AmplitudeAPI do
           }
         )
         body = {
-          api_key: described_class.api_key,
+          api_key: @described_class_instance.api_key,
           identification: JSON.generate([identification.to_hash, identification2.to_hash])
         }
 
         expect(Typhoeus).to receive(:post).with(AmplitudeAPI::IDENTIFY_URI_STRING, body: body)
 
-        described_class.identify([identification, identification2])
+        @described_class_instance.identify([identification, identification2])
       end
     end
   end
@@ -227,9 +231,9 @@ describe AmplitudeAPI do
           event_type: 'test_event',
           event_properties: { test_property: 1 }
         )
-        expect(described_class).to receive(:track).with(event)
+        expect(@described_class_instance).to receive(:track).with(event)
 
-        described_class.send_event('test_event', user, nil, event_properties: { test_property: 1 })
+        @described_class_instance.send_event('test_event', user, nil, event_properties: { test_property: 1 })
       end
 
       context 'the user is nil' do
@@ -239,9 +243,9 @@ describe AmplitudeAPI do
             event_type: 'test_event',
             event_properties: { test_property: 1 }
           )
-          expect(described_class).to receive(:track).with(event)
+          expect(@described_class_instance).to receive(:track).with(event)
 
-          described_class.send_event('test_event', nil, nil, event_properties: { test_property: 1 })
+          @described_class_instance.send_event('test_event', nil, nil, event_properties: { test_property: 1 })
         end
       end
 
@@ -252,9 +256,9 @@ describe AmplitudeAPI do
             event_type: 'test_event',
             event_properties: { test_property: 1 }
           )
-          expect(described_class).to receive(:track).with(event)
+          expect(@described_class_instance).to receive(:track).with(event)
 
-          described_class.send_event('test_event', user.id, nil, event_properties: { test_property: 1 })
+          @described_class_instance.send_event('test_event', user.id, nil, event_properties: { test_property: 1 })
         end
 
         it 'sends arbitrary user_properties to AmplitudeAPI' do
@@ -264,9 +268,9 @@ describe AmplitudeAPI do
             event_properties: { test_property: 1 },
             user_properties: { test_user_property: 'abc' }
           )
-          expect(described_class).to receive(:track).with(event)
+          expect(@described_class_instance).to receive(:track).with(event)
 
-          described_class.send_event(
+          @described_class_instance.send_event(
             'test_event',
             user.id,
             nil,
@@ -285,9 +289,9 @@ describe AmplitudeAPI do
             event_type: 'test_event',
             event_properties: { test_property: 1 }
           )
-          expect(described_class).to receive(:track).with(event)
+          expect(@described_class_instance).to receive(:track).with(event)
 
-          described_class.send_event('test_event', user, device_id, event_properties: { test_property: 1 })
+          @described_class_instance.send_event('test_event', user, device_id, event_properties: { test_property: 1 })
         end
       end
 
@@ -299,9 +303,9 @@ describe AmplitudeAPI do
             event_type: 'test_event',
             event_properties: { test_property: 1 }
           )
-          expect(described_class).to receive(:track).with(event)
+          expect(@described_class_instance).to receive(:track).with(event)
 
-          described_class.send_event('test_event', nil, device_id, event_properties: { test_property: 1 })
+          @described_class_instance.send_event('test_event', nil, device_id, event_properties: { test_property: 1 })
         end
       end
     end
@@ -317,9 +321,9 @@ describe AmplitudeAPI do
             last_name: 'Doe'
           }
         )
-        expect(described_class).to receive(:identify).with(identification)
+        expect(@described_class_instance).to receive(:identify).with(identification)
 
-        described_class.send_identify(user, nil, first_name: 'John', last_name: 'Doe')
+        @described_class_instance.send_identify(user, nil, first_name: 'John', last_name: 'Doe')
       end
 
       context 'the user is nil' do
@@ -331,9 +335,9 @@ describe AmplitudeAPI do
               last_name: 'Doe'
             }
           )
-          expect(described_class).to receive(:identify).with(identification)
+          expect(@described_class_instance).to receive(:identify).with(identification)
 
-          described_class.send_identify(nil, nil, first_name: 'John', last_name: 'Doe')
+          @described_class_instance.send_identify(nil, nil, first_name: 'John', last_name: 'Doe')
         end
       end
 
@@ -346,9 +350,9 @@ describe AmplitudeAPI do
               last_name: 'Doe'
             }
           )
-          expect(described_class).to receive(:identify).with(identification)
+          expect(@described_class_instance).to receive(:identify).with(identification)
 
-          described_class.send_identify(user.id, nil, first_name: 'John', last_name: 'Doe')
+          @described_class_instance.send_identify(user.id, nil, first_name: 'John', last_name: 'Doe')
         end
       end
     end
@@ -362,9 +366,9 @@ describe AmplitudeAPI do
             last_name: 'Doe'
           }
         )
-        expect(described_class).to receive(:identify).with(identification)
+        expect(@described_class_instance).to receive(:identify).with(identification)
 
-        described_class.send_identify(user, 'abc', first_name: 'John', last_name: 'Doe')
+        @described_class_instance.send_identify(user, 'abc', first_name: 'John', last_name: 'Doe')
       end
     end
   end
@@ -375,7 +379,7 @@ describe AmplitudeAPI do
 
     it 'sends request to Amplitude' do
       expect(Typhoeus).to receive(:get).with(AmplitudeAPI::SEGMENTATION_URI_STRING,
-                                             userpwd: "#{described_class.api_key}:#{described_class.secret_key}",
+                                             userpwd: "#{@described_class_instance.api_key}:#{@described_class_instance.secret_key}",
                                              params: {
                                                e:      { event_type: 'my event' }.to_json,
                                                start:  start_time.strftime('%Y%m%d'),
@@ -383,7 +387,7 @@ describe AmplitudeAPI do
                                                s:      [{ prop: 'foo', op: 'is', values: %w(bar) }.to_json]
                                              })
 
-      described_class.segmentation({ event_type: 'my event' }, start_time, end_time,
+      @described_class_instance.segmentation({ event_type: 'my event' }, start_time, end_time,
                                    s: [{ prop: 'foo', op: 'is', values: %w(bar) }]
                                   )
     end
@@ -398,7 +402,7 @@ describe AmplitudeAPI do
           test_property: 1
         }
       )
-      body = described_class.track_body(event)
+      body = @described_class_instance.track_body(event)
       expect(body[:api_key]).to eq('stub api key')
     end
 
@@ -414,7 +418,7 @@ describe AmplitudeAPI do
         },
         ip: '8.8.8.8'
       )
-      body = described_class.track_body(event)
+      body = @described_class_instance.track_body(event)
 
       expected = JSON.generate(
         [
